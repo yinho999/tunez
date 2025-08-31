@@ -1,8 +1,9 @@
 defmodule TunezWeb.Artists.FormLive do
   use TunezWeb, :live_view
+  alias Tunez.Music, warn: false
 
   def mount(_params, _session, socket) do
-    form = %{}
+    form = Music.form_to_create_artist()
 
     socket =
       socket
@@ -37,11 +38,29 @@ defmodule TunezWeb.Artists.FormLive do
     """
   end
 
-  def handle_event("validate", %{"form" => _form_data}, socket) do
+  def handle_event("validate", %{"form" => form_data}, socket) do
+    socket = update(socket, :form, fn form -> AshPhoenix.Form.validate(form, form_data) end)
+
     {:noreply, socket}
   end
 
-  def handle_event("save", %{"form" => _form_data}, socket) do
-    {:noreply, socket}
+  def handle_event("save", %{"form" => form_data}, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: form_data) do
+      {:ok, artist} ->
+        socket =
+          socket
+          |> put_flash(:info, "Artist saved successfully")
+          |> push_navigate(to: ~p"/artists/#{artist}")
+
+        {:noreply, socket}
+
+      {:error, form} ->
+        socket =
+          socket
+          |> put_flash(:error, "Could not save artist data")
+          |> assign(:form, to_form(form))
+
+        {:noreply, socket}
+    end
   end
 end
