@@ -1,4 +1,5 @@
 defmodule TunezWeb.Artists.IndexLive do
+  alias Tunez.Music, warn: false
   use TunezWeb, :live_view
 
   require Logger
@@ -12,11 +13,7 @@ defmodule TunezWeb.Artists.IndexLive do
   end
 
   def handle_params(_params, _url, socket) do
-    artists = [
-      %{id: "test-artist-1", name: "Test Artist 1"},
-      %{id: "test-artist-2", name: "Test Artist 2"},
-      %{id: "test-artist-3", name: "Test Artist 3"}
-    ]
+    artists = Music.read_artists!()
 
     socket =
       socket
