@@ -33,4 +33,16 @@ defmodule Tunez.Music.Album do
       allow_nil?(false)
     end
   end
+
+  actions do
+    defaults([:read, :destroy])
+
+    create :create do
+      accept([:name, :year_released, :cover_image_url, :artist_id])
+    end
+
+    update :update do
+      accept([:name, :year_released, :cover_image_url])
+    end
+  end
 end
