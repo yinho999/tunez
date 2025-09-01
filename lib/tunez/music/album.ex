@@ -31,7 +31,7 @@ defmodule Tunez.Music.Album do
       # - Faster JOINs when loading albums with their artists
       # - Quicker lookups when finding all albums by a specific artist
       # - Improved performance for relationship queries
-      reference(:artist, index?: true)
+      reference(:artist, index?: true, on_delete: :delete)
     end
   end
 
