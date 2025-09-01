@@ -139,8 +139,10 @@ defmodule Tunez.Music.Album do
       # ASH BUILTIN: numericality validation
       # Checks numeric constraints on the field
       numericality(:year_released,
-        greater_than: 1950,  # No albums before 1950 in our system
-        less_than_or_equal_to: &__MODULE__.next_year/0  # Can't be future albums beyond next year
+        # No albums before 1950 in our system
+        greater_than: 1950,
+        # Can't be future albums beyond next year
+        less_than_or_equal_to: &__MODULE__.next_year/0
       ),
       # CONDITIONAL VALIDATION: Only runs when conditions are met
       # present(:year_released) - only validate if the field has a value
@@ -165,15 +167,23 @@ defmodule Tunez.Music.Album do
       # CUSTOM ERROR MESSAGE: Explains the requirement clearly
       message: "must be a valid URL starting with https:// or /images/ and end with .png or .jpg"
     )
-    
+
     # VALIDATION EXECUTION ORDER:
     # 1. Attribute constraints (allow_nil?, type checking)
     # 2. Validations in the order they're defined
     # 3. Database constraints (foreign keys, unique indexes)
-    # 
+    #
     # VALIDATION CONTEXT:
     # - Validations have access to the entire changeset
     # - Can reference other fields for cross-field validation
     # - Can use custom validation modules for complex logic
+  end
+
+  identities do
+    identity(
+      :unique_album_name_per_artist,
+      [:name, :artist_id],
+      message: "artist already has an album with this name"
+    )
   end
 end
