@@ -16,7 +16,7 @@ defmodule Tunez.Music.Artist do
   postgres do
     # The actual database table name
     table("artists")
-    
+
     # The Ecto repo module used for database operations
     # This should match the repo configured in your application
     repo(Tunez.Repo)
@@ -59,19 +59,19 @@ defmodule Tunez.Music.Artist do
     # Creates standard CRUD actions with default behavior:
     # - create: Insert new artist (accepts all public attributes)
     # - read: Query artists (supports filtering, sorting, pagination)
-    # - update: Modify existing artist (accepts all public attributes)  
+    # - update: Modify existing artist (accepts all public attributes)
     # - destroy: Delete an artist (handles relationship constraints)
     defaults([:create, :read, :update, :destroy])
-    
+
     # Sets which attributes can be modified by default in create/update actions
     # This applies to all actions unless specifically overridden
     # Protects against mass assignment of unwanted fields
     default_accept([:name, :biography])
-    
+
     # COMMENTED EXAMPLES: Manual action definitions
     # These show how you could customize each action individually
     # The defaults() call above generates similar actions automatically
-    
+
     # create :create do
     #   # Explicitly list which fields can be set during creation
     #   accept [:name, :biography]
@@ -101,11 +101,14 @@ defmodule Tunez.Music.Artist do
     # One-to-many relationship: One artist can have many albums
     # This doesn't create a database column on the artists table
     # Instead, it expects albums table to have an artist_id foreign key
-    # 
+    #
     # Enables:
     # - Ash.load(artist, :albums) to fetch related albums
     # - Cascading deletes if configured
     # - Aggregate queries (e.g., count of albums)
-    has_many(:albums, Tunez.Music.Album)
+    # - Sorting (e.g., year_released: :desc)
+    has_many(:albums, Tunez.Music.Album) do
+      sort(year_released: :desc)
+    end
   end
 end
