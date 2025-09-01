@@ -15,7 +15,7 @@ defmodule Tunez.Music.Album do
   postgres do
     # Maps to the "albums" table in your PostgreSQL database
     table("albums")
-    
+
     # Uses the configured Ecto repo for database operations
     repo(Tunez.Repo)
 
@@ -26,7 +26,7 @@ defmodule Tunez.Music.Album do
     references do
       # Creates a foreign key reference to the artists table
       # index?: true creates a database index on artist_id column
-      # 
+      #
       # Benefits of indexing foreign keys:
       # - Faster JOINs when loading albums with their artists
       # - Quicker lookups when finding all albums by a specific artist
@@ -118,5 +118,62 @@ defmodule Tunez.Music.Album do
       # Only these fields can be modified in updates:
       accept([:name, :year_released, :cover_image_url])
     end
+  end
+
+  # HELPER FUNCTION FOR DYNAMIC VALIDATION
+  # ========================================
+  # Returns next year for validation upper bound
+  # Using a function allows the validation to be dynamic over time
+  def next_year, do: Date.utc_today().year + 1
+
+  # VALIDATIONS BLOCK
+  # =================
+  # Ash validations run during create/update actions
+  # They provide business logic validation beyond database constraints
+  # Validations run in the changeset phase before hitting the database
+  validations do
+    # YEAR VALIDATION
+    # ---------------
+    # Ensures albums have realistic release years
+    validate(
+      # ASH BUILTIN: numericality validation
+      # Checks numeric constraints on the field
+      numericality(:year_released,
+        greater_than: 1950,  # No albums before 1950 in our system
+        less_than_or_equal_to: &__MODULE__.next_year/0  # Can't be future albums beyond next year
+      ),
+      # CONDITIONAL VALIDATION: Only runs when conditions are met
+      # present(:year_released) - only validate if the field has a value
+      # This prevents validation errors on nil values
+      where: [present(:year_released)],
+      # CUSTOM ERROR MESSAGE: User-friendly error text
+      # Overrides the default Ash validation message
+      message: "must be between 1950 and next year"
+    )
+
+    # URL VALIDATION
+    # --------------
+    # Ensures cover images are from allowed sources with valid formats
+    validate(
+      # ASH BUILTIN: match validation
+      # Uses regex pattern matching for string validation
+      match(:cover_image_url, ~r"^(https://|/images/).+(\.png|\.jpg)$"),
+      # CONDITIONAL VALIDATION: Only validate on changes
+      # changing(:cover_image_url) - only run when this field is being modified
+      # This skips validation for existing data that might not match new rules
+      where: [changing(:cover_image_url)],
+      # CUSTOM ERROR MESSAGE: Explains the requirement clearly
+      message: "must be a valid URL starting with https:// or /images/ and end with .png or .jpg"
+    )
+    
+    # VALIDATION EXECUTION ORDER:
+    # 1. Attribute constraints (allow_nil?, type checking)
+    # 2. Validations in the order they're defined
+    # 3. Database constraints (foreign keys, unique indexes)
+    # 
+    # VALIDATION CONTEXT:
+    # - Validations have access to the entire changeset
+    # - Can reference other fields for cross-field validation
+    # - Can use custom validation modules for complex logic
   end
 end

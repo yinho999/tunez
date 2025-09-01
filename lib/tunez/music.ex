@@ -1,10 +1,24 @@
 defmodule Tunez.Music do
+  # ASH.DOMAIN - THE HEART OF YOUR DATA LAYER
+  # ==========================================
   # Ash.Domain is the core module that groups related resources together
   # It provides organization, a centralized code interface, and cross-cutting concerns
   # 
-  # Options:
+  # THREE KEY PURPOSES:
+  # 1. Organization - Groups related resources (Artist, Album) into a logical unit
+  # 2. Code Interface - Generates functions for all resource actions
+  # 3. Cross-cutting Concerns - Apply domain-wide policies, authorization, etc.
+  #
+  # OPTIONS EXPLAINED:
   # - otp_app: Links this domain to your OTP application for configuration
-  # - extensions: Adds additional capabilities (AshPhoenix enables Phoenix form generation)
+  #            Ash uses this to find your resources at compile time
+  # - extensions: Adds additional capabilities 
+  #              AshPhoenix adds form generation and LiveView helpers
+  #
+  # WHAT THIS GENERATES:
+  # For each `define` below, Ash creates TWO functions:
+  # - Regular version: Returns {:ok, result} or {:error, changeset}
+  # - Bang version (!): Returns result or raises exception
   use Ash.Domain, otp_app: :tunez, extensions: [AshPhoenix]
 
   # FORMS BLOCK (AshPhoenix Extension)
@@ -12,16 +26,33 @@ defmodule Tunez.Music do
   # Generates Phoenix form helper functions for LiveView/HTML forms
   # Each form definition creates a form_to_* function on this domain module
   # 
-  # Example: This creates Tunez.Music.form_to_create_album/1
+  # GENERATED FUNCTION: Tunez.Music.form_to_create_album/1
   # Usage in LiveView: 
   #   form = Tunez.Music.form_to_create_album(artist_id: artist.id)
   #   # Returns an %AshPhoenix.Form{} struct ready for use with Phoenix form helpers
+  #
+  # HOW IT WORKS:
+  # 1. AshPhoenix creates a form struct with the specified arguments
+  # 2. The form knows which action to call (create_album)
+  # 3. Validations from the resource are automatically included
+  # 4. The form can be validated in real-time with AshPhoenix.Form.validate
+  # 5. Submission uses AshPhoenix.Form.submit to execute the action
   forms do
     # form/2 arguments:
     # - First arg: name of the action (must match a defined action below)
     # - args: positional arguments the form function will accept
     #         These become required parameters for the generated function
     form(:create_album, args: [:artist_id])
+    
+    # NOTE: Missing form definitions that are used in FormLive modules:
+    # These would need to be added for full functionality:
+    # form(:create_artist)
+    # form(:update_artist)  
+    # form(:update_album)
+    #
+    # Without these, you'd use AshPhoenix.Form directly:
+    # AshPhoenix.Form.for_create(Tunez.Music.Artist, :create)
+    # AshPhoenix.Form.for_update(artist, :update)
   end
 
   # RESOURCES BLOCK

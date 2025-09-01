@@ -98,16 +98,28 @@ defmodule Tunez.Music.Artist do
   # Defines how this resource relates to other resources
   # Creates functions for loading and managing related data
   relationships do
-    # One-to-many relationship: One artist can have many albums
+    # ONE-TO-MANY RELATIONSHIP: Artist -> Albums
+    # -------------------------------------------
+    # One artist can have many albums
     # This doesn't create a database column on the artists table
     # Instead, it expects albums table to have an artist_id foreign key
     #
-    # Enables:
+    # WHAT THIS ENABLES:
     # - Ash.load(artist, :albums) to fetch related albums
-    # - Cascading deletes if configured
-    # - Aggregate queries (e.g., count of albums)
-    # - Sorting (e.g., year_released: :desc)
+    # - Music.get_artist_by_id!(id, load: [:albums]) for eager loading
+    # - Cascading deletes if configured in the data layer
+    # - Aggregate queries (e.g., count of albums, latest album year)
     has_many(:albums, Tunez.Music.Album) do
+      # DEFAULT SORT ORDER
+      # ------------------
+      # Albums are automatically sorted by year_released in descending order
+      # This means newest albums appear first when loading the relationship
+      # Example: artist.albums will return [2024 album, 2023 album, 2020 album...]
+      # 
+      # This sort applies whenever albums are loaded through this relationship:
+      # - Ash.load(artist, :albums)
+      # - Music.get_artist_by_id!(id, load: [:albums])
+      # - In LiveView when displaying artist albums
       sort(year_released: :desc)
     end
   end
