@@ -86,6 +86,12 @@ defmodule Tunez.Music.Artist do
     # No block needed when using defaults (allow_nil? defaults to true)
     attribute :biography, :string
 
+    # Previous names of the artist after rebranding or other changes
+    # Array of strings, defaults to an empty array
+    attribute :previous_names, {:array, :string} do
+      default []
+    end
+
     # Automatically managed timestamp fields
     # inserted_at: Set once when record is created
     # updated_at: Updated every time the record changes
@@ -115,7 +121,7 @@ defmodule Tunez.Music.Artist do
       # Albums are automatically sorted by year_released in descending order
       # This means newest albums appear first when loading the relationship
       # Example: artist.albums will return [2024 album, 2023 album, 2020 album...]
-      # 
+      #
       # This sort applies whenever albums are loaded through this relationship:
       # - Ash.load(artist, :albums)
       # - Music.get_artist_by_id!(id, load: [:albums])
