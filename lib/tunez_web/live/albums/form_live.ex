@@ -82,8 +82,8 @@ defmodule TunezWeb.Albums.FormLive do
         <!-- Artist is shown but disabled - it can't be changed after creation -->
         <!-- This enforces the business rule that albums don't switch artists -->
         <.input name="artist_id" label="Artist" value={@artist.name} disabled />
-
-        <!-- ALBUM ATTRIBUTES -->
+        
+    <!-- ALBUM ATTRIBUTES -->
         <!-- These map to the Album resource's attributes -->
         <div class="sm:flex gap-8 space-y-8 md:space-y-0">
           <div class="sm:w-3/4"><.input field={form[:name]} label="Name" /></div>

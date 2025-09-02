@@ -15,40 +15,11 @@ defmodule Tunez.Music.Artist do
   # Configures how this resource maps to your PostgreSQL database
   postgres do
     # The actual database table name
-    table("artists")
+    table "artists"
 
     # The Ecto repo module used for database operations
     # This should match the repo configured in your application
-    repo(Tunez.Repo)
-  end
-
-  # ATTRIBUTES BLOCK
-  # ================
-  # Defines the data fields for this resource
-  # These become columns in your database table
-  attributes do
-    # Creates an :id field with type Ash.Type.UUID
-    # Automatically generates UUIDs for new records
-    # Also marks this as the primary key
-    uuid_primary_key(:id)
-
-    # String attribute for the artist's name
-    # The do/end block allows additional configuration
-    attribute :name, :string do
-      # Makes this field required (cannot be nil or omitted)
-      # Database constraint: NOT NULL
-      allow_nil?(false)
-    end
-
-    # Optional text field for artist biography
-    # No block needed when using defaults (allow_nil? defaults to true)
-    attribute(:biography, :string)
-
-    # Automatically managed timestamp fields
-    # inserted_at: Set once when record is created
-    # updated_at: Updated every time the record changes
-    create_timestamp(:inserted_at)
-    update_timestamp(:updated_at)
+    repo Tunez.Repo
   end
 
   # ACTIONS BLOCK
@@ -61,12 +32,12 @@ defmodule Tunez.Music.Artist do
     # - read: Query artists (supports filtering, sorting, pagination)
     # - update: Modify existing artist (accepts all public attributes)
     # - destroy: Delete an artist (handles relationship constraints)
-    defaults([:create, :read, :update, :destroy])
+    defaults [:create, :read, :update, :destroy]
 
     # Sets which attributes can be modified by default in create/update actions
     # This applies to all actions unless specifically overridden
     # Protects against mass assignment of unwanted fields
-    default_accept([:name, :biography])
+    default_accept [:name, :biography]
 
     # COMMENTED EXAMPLES: Manual action definitions
     # These show how you could customize each action individually
@@ -93,6 +64,35 @@ defmodule Tunez.Music.Artist do
     # end
   end
 
+  # ATTRIBUTES BLOCK
+  # ================
+  # Defines the data fields for this resource
+  # These become columns in your database table
+  attributes do
+    # Creates an :id field with type Ash.Type.UUID
+    # Automatically generates UUIDs for new records
+    # Also marks this as the primary key
+    uuid_primary_key :id
+
+    # String attribute for the artist's name
+    # The do/end block allows additional configuration
+    attribute :name, :string do
+      # Makes this field required (cannot be nil or omitted)
+      # Database constraint: NOT NULL
+      allow_nil? false
+    end
+
+    # Optional text field for artist biography
+    # No block needed when using defaults (allow_nil? defaults to true)
+    attribute :biography, :string
+
+    # Automatically managed timestamp fields
+    # inserted_at: Set once when record is created
+    # updated_at: Updated every time the record changes
+    create_timestamp :inserted_at
+    update_timestamp :updated_at
+  end
+
   # RELATIONSHIPS BLOCK
   # ===================
   # Defines how this resource relates to other resources
@@ -109,7 +109,7 @@ defmodule Tunez.Music.Artist do
     # - Music.get_artist_by_id!(id, load: [:albums]) for eager loading
     # - Cascading deletes if configured in the data layer
     # - Aggregate queries (e.g., count of albums, latest album year)
-    has_many(:albums, Tunez.Music.Album) do
+    has_many :albums, Tunez.Music.Album do
       # DEFAULT SORT ORDER
       # ------------------
       # Albums are automatically sorted by year_released in descending order
@@ -120,7 +120,7 @@ defmodule Tunez.Music.Artist do
       # - Ash.load(artist, :albums)
       # - Music.get_artist_by_id!(id, load: [:albums])
       # - In LiveView when displaying artist albums
-      sort(year_released: :desc)
+      sort year_released: :desc
     end
   end
 end

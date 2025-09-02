@@ -8,7 +8,7 @@ defmodule TunezWeb.Artists.FormLive do
   # 
   # This module handles both create and update operations using
   # the same form component, showcasing Ash's unified approach
-  
+
   use TunezWeb, :live_view
   alias Tunez.Music, warn: false
 
@@ -18,7 +18,7 @@ defmodule TunezWeb.Artists.FormLive do
   def mount(%{"id" => id}, _session, socket) do
     # ASH: Fetch the existing artist using generated function
     artist = Music.get_artist_by_id!(id)
-    
+
     # ASHPHOENIX: Generate an update form
     # Music.form_to_update_artist is NOT a standard Ash function
     # This would need to be defined in your domain's forms block:
@@ -73,8 +73,8 @@ defmodule TunezWeb.Artists.FormLive do
       <.header>
         <.h1>{@page_title}</.h1>
       </.header>
-
-      <!-- ASHPHOENIX FORM SETUP -->
+      
+    <!-- ASHPHOENIX FORM SETUP -->
       <!-- phx-change="validate" triggers real-time validation -->
       <!-- phx-submit="save" handles form submission -->
       <.simple_form

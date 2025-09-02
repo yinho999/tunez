@@ -3,7 +3,7 @@ defmodule TunezWeb.Artists.IndexLive do
   # ====================================
   # This LiveView displays a grid of all artists in the system
   # Demonstrates Ash's query interface and potential for filtering/sorting
-  
+
   alias Tunez.Music, warn: false
   use TunezWeb, :live_view
 
@@ -198,7 +198,7 @@ defmodule TunezWeb.Artists.IndexLive do
   # EVENT HANDLERS FOR FUTURE ASH INTEGRATION
   # ==========================================
   # These handlers prepare for Ash query features
-  
+
   def handle_event("change-sort", %{"sort_by" => sort_by}, socket) do
     # TODO: Integrate with Ash sorting
     # Example: Music.read_artists!(sort: [{sort_by, :asc}])

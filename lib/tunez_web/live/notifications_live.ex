@@ -9,7 +9,7 @@ defmodule TunezWeb.NotificationsLive do
   # - Use Ash queries to fetch user-specific notifications
   # - Implement read/unread status with Ash actions
   # - Add real-time updates with Ash.Notifier
-  
+
   use TunezWeb, :live_view
 
   # MOUNT CALLBACK
@@ -49,7 +49,7 @@ defmodule TunezWeb.NotificationsLive do
         </span>
       </div>
       
-      <!-- NOTIFICATIONS DROPDOWN -->
+    <!-- NOTIFICATIONS DROPDOWN -->
       <div id="notifications" class="z-10 hidden absolute top-10 right-0 bg">
         <!-- Empty state -->
         <div :if={@notifications == []} class="p-2 shadow bg-white rounded-lg w-52">
@@ -57,7 +57,7 @@ defmodule TunezWeb.NotificationsLive do
           <span class="text-sm px-2">No new notifications!</span>
         </div>
         
-        <!-- Notification list -->
+    <!-- Notification list -->
         <!-- With Ash, each notification would be a resource with relationships -->
         <ul
           :if={@notifications != []}
@@ -78,7 +78,8 @@ defmodule TunezWeb.NotificationsLive do
               <p>
                 <!-- Notification content with loaded relationships -->
                 <!-- These would come from Ash's relationship loading -->
-                The album <span class="font-bold">{notification.album.name}</span>
+                The album
+                <span class="font-bold">{notification.album.name}</span>
                 has been added for {notification.album.artist.name}<br />
                 <span class="text-xs opacity-60">{time_ago_in_words(notification.inserted_at)}</span>
               </p>
