@@ -32,7 +32,7 @@ defmodule Tunez.Music.Artist do
     # - read: Query artists (supports filtering, sorting, pagination)
     # - update: Modify existing artist (accepts all public attributes)
     # - destroy: Delete an artist (handles relationship constraints)
-    defaults [:create, :read, :update, :destroy]
+    defaults [:create, :read, :destroy]
 
     # Sets which attributes can be modified by default in create/update actions
     # This applies to all actions unless specifically overridden
@@ -58,6 +58,43 @@ defmodule Tunez.Music.Artist do
     #   # Control which fields can be modified during updates
     #   accept [:name, :biography]
     # end
+    update :update do
+      # Disable atomic updates to allow custom change functions to run
+      # Atomic updates are Ash's optimization that updates records directly in the database
+      # We need this set to false because our custom logic needs to run in Elixir
+      require_atomic? false
+      
+      # Specify which fields users can modify in this update action
+      accept [:name, :biography]
+      
+      # Custom change function to track artist name history when name changes
+      change fn changeset, _context ->
+        # Get the NEW name from user input (what the user wants to change to)
+        # This uses get_attribute which retrieves the incoming change value
+        new_name = Ash.Changeset.get_attribute(changeset, :name)
+
+        # Get the CURRENT name stored in the database (before this update)
+        # This uses get_data which retrieves the original database record
+        previous_name = Ash.Changeset.get_data(changeset, :name)
+
+        # Get the existing array of previous names from the database
+        # This contains all the names this artist had before the current one
+        previous_names = Ash.Changeset.get_data(changeset, :previous_names)
+
+        # Build the updated previous names list:
+        # 1. Add the current name (which is about to become "previous") to the front
+        names = [previous_name | previous_names]
+          # 2. Remove any duplicate names to keep the list clean
+          |> Enum.uniq()
+          # 3. Remove the new name if it exists in history (in case artist is reverting to an old name)
+          # This prevents having the current active name also listed in previous names
+          |> Enum.reject(fn name -> name == new_name end)
+
+        # Update the previous_names attribute with the new list
+        # This will be saved to the database when the changeset is applied
+        Ash.Changeset.change_attribute(changeset, :previous_names, names)
+      end, where: [changing(:name)]  # Only run this change function when the name field is actually being changed
+    end
 
     # destroy :destroy do
     #   # Could add soft delete logic, cascading rules, or validations here
