@@ -29,7 +29,8 @@ defmodule Tunez.Music.Changes.UpdatePreviousNames do
 
       # Build the updated previous names list:
       # 1. Add the current name (which is about to become "previous") to the front
-      names = [previous_name | previous_names]
+      names =
+        [previous_name | previous_names]
         # 2. Remove any duplicate names to keep the list clean
         |> Enum.uniq()
         # 3. Remove the new name if it exists in history (in case artist is reverting to an old name)

@@ -68,7 +68,8 @@ defmodule Tunez.Music.Artist do
       accept [:name, :biography]
 
       # Custom change function to track artist name history when name changes
-      change Tunez.Music.Changes.UpdatePreviousNames, where: [changing(:name)]  # Only run this change function when the name field is actually being changed
+      # Only run this change function when the name field is actually being changed
+      change Tunez.Music.Changes.UpdatePreviousNames, where: [changing(:name)]
     end
 
     # destroy :destroy do
