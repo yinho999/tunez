@@ -90,11 +90,42 @@ defmodule Tunez.Music.Artist do
     #   # Could add soft delete logic, cascading rules, or validations here
     # end
 
+    # SEARCH ACTION
+    # -------------
+    # Custom read action for searching artists by name
+    # Provides fast, case-insensitive partial string matching
     read :search do
+      # QUERY ARGUMENT CONFIGURATION
+      # Defines the search parameter that users provide
       argument :query, :ci_string do
+        # ci_string: Case-Insensitive string type
+        # Automatically handles case-insensitive comparisons
+
+        # Allow empty searches to return all artists
+        # When query="", the filter effectively becomes a no-op
         constraints allow_empty?: true
+
+        # Default to empty string if no query provided
+        # This makes the argument optional in practice
         default ""
       end
+
+      # FILTER EXPRESSION (For repeatable and parameterized queries)
+      # Applies the search logic to the database query
+      # contains(): Ash function that checks if a string contains a substring
+      #   - Requires 'ash-functions' PostgreSQL extension (see Repo.installed_extensions)
+      #   - Performs case-insensitive partial matching
+      # ^arg(:query): Captures the query argument value passed by the user
+      #
+      # PERFORMANCE NOTE:
+      # This filter is optimized by the GIN trigram index (line 35)
+      # The index makes partial string searches extremely fast
+      # Without it, this would require a full table scan
+      #
+      # USAGE EXAMPLES:
+      # Music.Artist.search!(query: "Beatles")  # Finds "The Beatles"
+      # Music.Artist.search!(query: "beat")     # Partial match works
+      # Music.Artist.search!()                  # Returns all artists
       filter expr(contains(name, ^arg(:query)))
     end
   end
