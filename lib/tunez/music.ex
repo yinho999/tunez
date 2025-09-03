@@ -3,7 +3,7 @@ defmodule Tunez.Music do
   # ==========================================
   # Ash.Domain is the core module that groups related resources together
   # It provides organization, a centralized code interface, and cross-cutting concerns
-  # 
+  #
   # THREE KEY PURPOSES:
   # 1. Organization - Groups related resources (Artist, Album) into a logical unit
   # 2. Code Interface - Generates functions for all resource actions
@@ -12,7 +12,7 @@ defmodule Tunez.Music do
   # OPTIONS EXPLAINED:
   # - otp_app: Links this domain to your OTP application for configuration
   #            Ash uses this to find your resources at compile time
-  # - extensions: Adds additional capabilities 
+  # - extensions: Adds additional capabilities
   #              AshPhoenix adds form generation and LiveView helpers
   #
   # WHAT THIS GENERATES:
@@ -25,9 +25,9 @@ defmodule Tunez.Music do
   # ===================================
   # Generates Phoenix form helper functions for LiveView/HTML forms
   # Each form definition creates a form_to_* function on this domain module
-  # 
+  #
   # GENERATED FUNCTION: Tunez.Music.form_to_create_album/1
-  # Usage in LiveView: 
+  # Usage in LiveView:
   #   form = Tunez.Music.form_to_create_album(artist_id: artist.id)
   #   # Returns an %AshPhoenix.Form{} struct ready for use with Phoenix form helpers
   #
@@ -47,7 +47,7 @@ defmodule Tunez.Music do
     # NOTE: Missing form definitions that are used in FormLive modules:
     # These would need to be added for full functionality:
     # form(:create_artist)
-    # form(:update_artist)  
+    # form(:update_artist)
     # form(:update_album)
     #
     # Without these, you'd use AshPhoenix.Form directly:
@@ -89,14 +89,19 @@ defmodule Tunez.Music do
       # Accepts an artist record or ID
       # Usage: :ok = Tunez.Music.destroy_artist!(artist)
       define :destroy_artist, action: :destroy
+
+      # Creates: Tunez.Music.search_artists/1 and search_artists!/1
+      # Searches for artists by name
+      # Usage: artists = Tunez.Music.search_artists!(query: "Beatles")
+      define :search_artists, action: :search, args: [:query]
     end
 
     resource Tunez.Music.Album do
       # Creates: Tunez.Music.create_album/1 and create_album!/1
       # Note: This matches the form defined above, enabling form generation
       # Usage: {:ok, album} = Tunez.Music.create_album(%{
-      #   name: "Abbey Road", 
-      #   year_released: 1969, 
+      #   name: "Abbey Road",
+      #   year_released: 1969,
       #   artist_id: artist.id
       # })
       define :create_album, action: :create
