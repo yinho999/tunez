@@ -146,6 +146,8 @@ defmodule Tunez.Music.Artist do
       # Makes this field required (cannot be nil or omitted)
       # Database constraint: NOT NULL
       allow_nil? false
+      # Make the name public
+      public? true
     end
 
     # Optional text field for artist biography
@@ -161,8 +163,8 @@ defmodule Tunez.Music.Artist do
     # Automatically managed timestamp fields
     # inserted_at: Set once when record is created
     # updated_at: Updated every time the record changes
-    create_timestamp :inserted_at
-    update_timestamp :updated_at
+    create_timestamp :inserted_at, public?: true
+    update_timestamp :updated_at, public?: true
   end
 
   # RELATIONSHIPS BLOCK
