@@ -4,10 +4,26 @@ defmodule Tunez.Repo do
 
   @impl true
   def installed_extensions do
-    # Add extensions here, and the migration generator will install them.
-    # ash-functions is required for the contains function
-    # pg_trgm is required for the pg_trgm extension
-    # https://hexdocs.pm/ash_postgres/AshPostgres.Repo.html
+    # POSTGRESQL EXTENSIONS
+    # =====================
+    # Extensions that must be installed in the database for this application
+    # The migration generator will automatically create them when running migrations
+    #
+    # ASH-FUNCTIONS EXTENSION
+    # -----------------------
+    # - Required by Ash framework for advanced query functions
+    # - Enables the 'contains' function used in filters (e.g., Artist.search action)
+    # - Provides additional SQL functions for complex Ash queries
+    #
+    # PG_TRGM EXTENSION (PostgreSQL Trigram)
+    # ----------------------------------------
+    # - Enables trigram-based operations for fuzzy string matching
+    # - Required for GIN indexes with gin_trgm_ops operator class
+    # - Powers similarity searches using % operator
+    # - Supports ILIKE pattern matching optimization
+    # - Used by Artist resource for fast name searches
+    #
+    # Documentation: https://hexdocs.pm/ash_postgres/AshPostgres.Repo.html
     ["ash-functions", "pg_trgm"]
   end
 

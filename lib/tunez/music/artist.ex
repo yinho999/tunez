@@ -21,7 +21,17 @@ defmodule Tunez.Music.Artist do
     # This should match the repo configured in your application
     repo Tunez.Repo
 
+    # CUSTOM DATABASE INDEXES
+    # -----------------------
+    # Define additional indexes beyond standard primary/foreign keys
     custom_indexes do
+      # GIN INDEX WITH TRIGRAM SUPPORT
+      # Creates a Generalized Inverted Index using trigram operations
+      # - gin_trgm_ops: PostgreSQL trigram operator class (requires pg_trgm extension)
+      # - Enables fast fuzzy string matching and similarity searches
+      # - Optimizes queries like: WHERE name % 'search_term' (similarity matching)
+      # - Also speeds up: ILIKE '%pattern%' and regular expression searches
+      # - Much faster than B-tree indexes for partial string matching
       index "name gin_trgm_ops", name: "artist_name_gin_index", using: "GIN"
     end
   end
