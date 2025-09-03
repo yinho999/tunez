@@ -20,6 +20,10 @@ defmodule Tunez.Music.Artist do
     # The Ecto repo module used for database operations
     # This should match the repo configured in your application
     repo Tunez.Repo
+
+    custom_indexes do
+      index "name gin_trgm_ops", name: "artist_name_gin_index", using: "GIN"
+    end
   end
 
   # ACTIONS BLOCK
@@ -75,6 +79,14 @@ defmodule Tunez.Music.Artist do
     # destroy :destroy do
     #   # Could add soft delete logic, cascading rules, or validations here
     # end
+
+    read :search do
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+      filter expr(contains(name, ^arg(:query)))
+    end
   end
 
   # ATTRIBUTES BLOCK

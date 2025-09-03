@@ -5,7 +5,10 @@ defmodule Tunez.Repo do
   @impl true
   def installed_extensions do
     # Add extensions here, and the migration generator will install them.
-    ["ash-functions"]
+    # ash-functions is required for the contains function
+    # pg_trgm is required for the pg_trgm extension
+    # https://hexdocs.pm/ash_postgres/AshPostgres.Repo.html
+    ["ash-functions", "pg_trgm"]
   end
 
   # Don't open unnecessary transactions
