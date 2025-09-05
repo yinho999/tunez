@@ -41,7 +41,7 @@ defmodule TunezWeb.Artists.IndexLive do
     # - Add sorting: Music.read_artists!(sort: [:name])
     # - Add pagination: Music.read_artists!(page: [limit: 20, offset: 0])
     # - Add aggregates: load album_count using Ash aggregates
-    page = Music.search_artists!(query_text, query: [sort_input: sort_by])
+    page = Music.search_artists!(query_text, page: page_params, query: [sort_input: sort_by])
 
     socket =
       socket
