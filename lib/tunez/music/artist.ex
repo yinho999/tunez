@@ -15,11 +15,11 @@ defmodule Tunez.Music.Artist do
   # Configures how this resource maps to your PostgreSQL database
   postgres do
     # The actual database table name
-    table "artists"
+    table("artists")
 
     # The Ecto repo module used for database operations
     # This should match the repo configured in your application
-    repo Tunez.Repo
+    repo(Tunez.Repo)
 
     # CUSTOM DATABASE INDEXES
     # -----------------------
@@ -32,7 +32,7 @@ defmodule Tunez.Music.Artist do
       # - Optimizes queries like: WHERE name % 'search_term' (similarity matching)
       # - Also speeds up: ILIKE '%pattern%' and regular expression searches
       # - Much faster than B-tree indexes for partial string matching
-      index "name gin_trgm_ops", name: "artist_name_gin_index", using: "GIN"
+      index("name gin_trgm_ops", name: "artist_name_gin_index", using: "GIN")
     end
   end
 
@@ -46,12 +46,12 @@ defmodule Tunez.Music.Artist do
     # - read: Query artists (supports filtering, sorting, pagination)
     # - update: Modify existing artist (accepts all public attributes)
     # - destroy: Delete an artist (handles relationship constraints)
-    defaults [:create, :read, :destroy]
+    defaults([:create, :read, :destroy])
 
     # Sets which attributes can be modified by default in create/update actions
     # This applies to all actions unless specifically overridden
     # Protects against mass assignment of unwanted fields
-    default_accept [:name, :biography]
+    default_accept([:name, :biography])
 
     # COMMENTED EXAMPLES: Manual action definitions
     # These show how you could customize each action individually
@@ -76,14 +76,14 @@ defmodule Tunez.Music.Artist do
       # Disable atomic updates to allow custom change functions to run
       # Atomic updates are Ash's optimization that updates records directly in the database
       # We need this set to false because our custom logic needs to run in Elixir
-      require_atomic? false
+      require_atomic?(false)
 
       # Specify which fields users can modify in this update action
-      accept [:name, :biography]
+      accept([:name, :biography])
 
       # Custom change function to track artist name history when name changes
       # Only run this change function when the name field is actually being changed
-      change Tunez.Music.Changes.UpdatePreviousNames, where: [changing(:name)]
+      change(Tunez.Music.Changes.UpdatePreviousNames, where: [changing(:name)])
     end
 
     # destroy :destroy do
@@ -103,11 +103,11 @@ defmodule Tunez.Music.Artist do
 
         # Allow empty searches to return all artists
         # When query="", the filter effectively becomes a no-op
-        constraints allow_empty?: true
+        constraints(allow_empty?: true)
 
         # Default to empty string if no query provided
         # This makes the argument optional in practice
-        default ""
+        default("")
       end
 
       # FILTER EXPRESSION (For repeatable and parameterized queries)
@@ -126,9 +126,9 @@ defmodule Tunez.Music.Artist do
       # Music.Artist.search!(query: "Beatles")  # Finds "The Beatles"
       # Music.Artist.search!(query: "beat")     # Partial match works
       # Music.Artist.search!()                  # Returns all artists
-      filter expr(contains(name, ^arg(:query)))
+      filter(expr(contains(name, ^arg(:query))))
 
-      pagination offset?: true, default_limit: 12
+      pagination(offset?: true, default_limit: 12)
     end
   end
 
@@ -140,33 +140,33 @@ defmodule Tunez.Music.Artist do
     # Creates an :id field with type Ash.Type.UUID
     # Automatically generates UUIDs for new records
     # Also marks this as the primary key
-    uuid_primary_key :id
+    uuid_primary_key(:id)
 
     # String attribute for the artist's name
     # The do/end block allows additional configuration
     attribute :name, :string do
       # Makes this field required (cannot be nil or omitted)
       # Database constraint: NOT NULL
-      allow_nil? false
+      allow_nil?(false)
       # Make the name public
-      public? true
+      public?(true)
     end
 
     # Optional text field for artist biography
     # No block needed when using defaults (allow_nil? defaults to true)
-    attribute :biography, :string
+    attribute(:biography, :string)
 
     # Previous names of the artist after rebranding or other changes
     # Array of strings, defaults to an empty array
     attribute :previous_names, {:array, :string} do
-      default []
+      default([])
     end
 
     # Automatically managed timestamp fields
     # inserted_at: Set once when record is created
     # updated_at: Updated every time the record changes
-    create_timestamp :inserted_at, public?: true
-    update_timestamp :updated_at, public?: true
+    create_timestamp(:inserted_at, public?: true)
+    update_timestamp(:updated_at, public?: true)
   end
 
   # RELATIONSHIPS BLOCK
@@ -196,7 +196,13 @@ defmodule Tunez.Music.Artist do
       # - Ash.load(artist, :albums)
       # - Music.get_artist_by_id!(id, load: [:albums])
       # - In LiveView when displaying artist albums
-      sort year_released: :desc
+      sort(year_released: :desc)
     end
+  end
+
+  calculations do
+    calculate(:album_count, :integer, expr(count(albums)))
+    calculate(:latest_album_year_released, :integer, expr(first(albums, field: :year_released)))
+    calculate(:cover_image_url, :string, expr(first(albums, field: :cover_image_url)))
   end
 end

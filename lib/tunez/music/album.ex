@@ -192,12 +192,12 @@ defmodule Tunez.Music.Album do
   end
 
   calculations do
-    calculate(:years_ago, :integer, expr(2025 - year_released))
+    # calculate(:years_ago, :integer, expr(2025 - year_released))
 
-    calculate(
-      :string_years_ago,
-      :string,
-      expr("wow, this was released " <> years_ago <> " years ago")
-    )
+    # calculate(
+    #   :string_years_ago,
+    #   :string,
+    #   expr("wow, this was released " <> years_ago <> " years ago")
+    # )
   end
 end
