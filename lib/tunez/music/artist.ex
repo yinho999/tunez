@@ -20,24 +20,22 @@ defmodule Tunez.Music.Artist do
   end
 
   actions do
-    create :create do
-      accept [:name, :biography]
+    # create :create do
+    #   accept [:name, :biography]
 
-    end
+    # end
 
-    read  :read do
-      primary? true
-    end
+    # read  :read do
+    #   primary? true
+    # end
 
-    update :update do
-      accept [:name, :biography]
-    end
+    # update :update do
+    #   accept [:name, :biography]
+    # end
 
-    destroy :destroy do
-
-    end
+    # destroy :destroy do
+    # end
+    defaults [:read, :destroy, create: :*, update: :*]
+    default_accept [:name, :biography]
   end
-
-
-
 end
