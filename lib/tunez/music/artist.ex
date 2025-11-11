@@ -36,6 +36,5 @@ defmodule Tunez.Music.Artist do
     # destroy :destroy do
     # end
     defaults [:read, :destroy, create: :*, update: :*]
-    default_accept [:name, :biography]
   end
 end
