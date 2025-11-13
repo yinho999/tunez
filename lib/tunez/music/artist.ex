@@ -22,7 +22,6 @@ defmodule Tunez.Music.Artist do
   actions do
     # create :create do
     #   accept [:name, :biography]
-
     # end
 
     # read  :read do
