@@ -52,6 +52,10 @@ defmodule Tunez.Music.Album do
       public? true
     end
 
+    attribute :previous_names, {:array, :string} do
+      default []
+    end
+
     create_timestamp :inserted_at
     update_timestamp :updated_at
   end
