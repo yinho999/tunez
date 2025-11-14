@@ -7,6 +7,7 @@ defmodule TunezWeb.Artists.ShowLive do
     {:ok, socket}
   end
 
+  @spec handle_params(map(), any(), map()) :: {:noreply, map()}
   def handle_params(%{"id" => artist_id}, _url, socket) do
     artist = Tunez.Music.get_artist_by_id!(artist_id)
 
@@ -148,6 +149,19 @@ defmodule TunezWeb.Artists.ShowLive do
   end
 
   def handle_event("destroy-artist", _params, socket) do
+    artist = socket.assigns.artist
+    case Tunez.Music.destroy_artist!(artist) do
+      :ok ->
+        socket = socket
+        |> put_flash(:info, "Artist deleted successfully")
+        |> push_navigate(~p"/")
+        {:noreply, socket}
+      {:error, error} ->
+        Logger.info("Couldnt delete artist '#{socket.assigns.artist.id}' #{inspect(error)}")
+        socket = socket
+        |> put_flash(:error, "Couldnt delete the Artist")
+      {:noreply, socket}
+    end
     {:noreply, socket}
   end
 
