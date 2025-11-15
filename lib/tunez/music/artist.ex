@@ -21,7 +21,15 @@ defmodule Tunez.Music.Artist do
 
     # destroy :destroy do
     # end
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, create: :*]
+
+    update :update do
+      require_atomic? false
+      accept [:name, :biography]
+
+      change Tunez.Music.Changes.UpdatePreviousNames,
+        where: [changing(:name)]
+    end
   end
 
   attributes do
